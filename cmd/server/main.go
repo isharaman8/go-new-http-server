@@ -3,8 +3,8 @@ package main
 import (
 	"go-user-api/internal/db"
 	"go-user-api/internal/handler"
-	"go-user-api/internal/middleware"
 	"go-user-api/internal/repository"
+	"go-user-api/internal/routes"
 	"log"
 	"net/http"
 
@@ -32,13 +32,9 @@ func main() {
 
 	r := chi.NewRouter()
 
-	r.Post("/users", userHandler.CreateUser)
-	r.Get("/users/{id}", userHandler.GetUser)
-	r.Put("/users/{id}", userHandler.UpdateUser)
-	r.Delete("/users/{id}", userHandler.DeleteUser)
-	r.Post("/auth/signup", authHandler.Signup)
-	r.Post("/auth/login", authHandler.Login)
-	r.With(middleware.JWTAuthMiddleware).Get("/auth/profile", authHandler.GetUserProfile)
+	// register routes
+	routes.RegisterUserRoutes(r, userHandler)
+	routes.RegisterAuthRoutes(r, authHandler)
 
 	log.Println("Server running on :8080")
 	http.ListenAndServe(":8080", r)
