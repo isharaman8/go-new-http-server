@@ -1,3 +1,4 @@
+// Package handler
 package handler
 
 import (
@@ -11,10 +12,10 @@ import (
 )
 
 type UserHandler struct {
-	repo *repository.UserRepo
+	repo repository.UserRepository
 }
 
-func NewUserHandler(repo *repository.UserRepo) *UserHandler {
+func NewUserHandler(repo repository.UserRepository) *UserHandler {
 	return &UserHandler{repo: repo}
 }
 
