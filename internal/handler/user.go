@@ -1,4 +1,3 @@
-// Package handler
 package handler
 
 import (
@@ -23,7 +22,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var u model.User
 
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
+		http.Error(w, "Invalid nput", http.StatusBadRequest)
 		return
 	}
 

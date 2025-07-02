@@ -22,8 +22,11 @@ func (m *mockUserRepo) Create(_ context.Context, u *model.User) error {
 	return nil
 }
 func (m *mockUserRepo) Get(_ context.Context, id int) (*model.User, error) { return nil, nil }
-func (m *mockUserRepo) Update(_ context.Context, u *model.User) error      { return nil }
-func (m *mockUserRepo) Delete(_ context.Context, id int) error             { return nil }
+func (m *mockUserRepo) GetByEmail(_ context.Context, email string) (*model.User, error) {
+	return nil, nil
+}
+func (m *mockUserRepo) Update(_ context.Context, u *model.User) error { return nil }
+func (m *mockUserRepo) Delete(_ context.Context, id int) error        { return nil }
 
 // ---- ✅ Test CreateUser ----
 
