@@ -2,7 +2,6 @@ package handler_test
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -10,29 +9,15 @@ import (
 
 	"go-user-api/internal/handler"
 	"go-user-api/internal/model"
+	"go-user-api/internal/testutils"
 
 	"github.com/stretchr/testify/assert"
 )
 
-// ---- 👇 Mock Repository Implementation ----
-
-type mockUserRepo struct{}
-
-func (m *mockUserRepo) Create(_ context.Context, u *model.User) error {
-	u.ID = 1 // Simulate DB auto-increment
-	return nil
-}
-func (m *mockUserRepo) Get(_ context.Context, id int) (*model.User, error) { return nil, nil }
-func (m *mockUserRepo) GetByEmail(_ context.Context, email string) (*model.User, error) {
-	return nil, nil
-}
-func (m *mockUserRepo) Update(_ context.Context, u *model.User) error { return nil }
-func (m *mockUserRepo) Delete(_ context.Context, id int) error        { return nil }
-
 // ---- ✅ Test CreateUser ----
 
 func TestCreateUser(t *testing.T) {
-	handler := handler.NewUserHandler(&mockUserRepo{})
+	handler := handler.NewUserHandler(&testutils.MockUserRepo{})
 
 	// Prepare input user JSON
 	inputUser := model.User{
