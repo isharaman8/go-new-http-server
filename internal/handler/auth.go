@@ -22,6 +22,16 @@ func NewAuthRouteHandler(repo repository.UserRepository) *AuthRouteHandler {
 	return &AuthRouteHandler{repo: repo}
 }
 
+// Signup godoc
+// @Summary Signup a new user
+// @Description Create a new user and return JWT token
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param   user  body  model.User  true  "User Data"
+// @Success 200 {object} map[string]string
+// @Failure 400 {string} string "Invalid input"
+// @Router /auth/signup [post]
 func (h *AuthRouteHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	var u model.User
 
@@ -50,11 +60,19 @@ func (h *AuthRouteHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(u)
 }
 
+// Login godoc
+// @Summary Login a user
+// @Description Authenticate a user and return JWT token
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param   login  body  model.LoginInput  true  "Login Data"
+// @Success 200 {object} map[string]string
+// @Failure 400 {string} string "Invalid input"
+// @Failure 401 {string} string "Unauthorized"
+// @Router /auth/login [post]
 func (h *AuthRouteHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Email    string `json:"email" validate:"email,required"`
-		Password string `json:"password" validate:"required,min=3"`
-	}
+	var input model.LoginInput
 
 	// Step 1: Decode input
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -92,6 +110,17 @@ func (h *AuthRouteHandler) Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// GetUserProfile godoc
+// @Summary      Get the authenticated user's profile
+// @Description  Requires a valid JWT token. Returns user info based on token.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {object} model.User
+// @Failure      400 {object} map[string]string
+// @Failure      401 {object} map[string]string
+// @Router       /auth/profile [get]
 func (h *AuthRouteHandler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value(middleware.UserIDKey).(int)
 

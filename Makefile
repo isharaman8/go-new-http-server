@@ -1,4 +1,4 @@
-.PHONY: test run lint build
+.PHONY: test run lint build 
 
 test:
 	go test -v ./...
@@ -11,3 +11,7 @@ lint:
 
 build:
 	go build -o bin/app ./cmd/server/
+
+
+generate_docs:
+	swag init --generalInfo cmd/server/main.go --output docs

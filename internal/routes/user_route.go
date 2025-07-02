@@ -10,6 +10,7 @@ func RegisterUserRoutes(r chi.Router, userHandler *handler.UserHandler) {
 	const userRouteWithId string = "/users/{id}"
 
 	r.Post("/users", userHandler.CreateUser)
+	r.Get("/users", userHandler.GetAllUsers)
 	r.Get(userRouteWithId, userHandler.GetUser)
 	r.Put(userRouteWithId, userHandler.UpdateUser)
 	r.Delete(userRouteWithId, userHandler.DeleteUser)

@@ -15,6 +15,7 @@ type UserRepo struct {
 type UserRepository interface {
 	Create(ctx context.Context, u *model.User) error
 	Get(ctx context.Context, id int) (*model.User, error)
+	GetAllUsers(ctx context.Context) ([]*model.User, error)
 	GetByEmail(ctx context.Context, email string) (*model.User, error)
 	Update(ctx context.Context, u *model.User) error
 	Delete(ctx context.Context, id int) error
@@ -36,6 +37,33 @@ func (r *UserRepo) Get(ctx context.Context, id int) (*model.User, error) {
 
 	err := row.Scan(&u.ID, &u.Name, &u.Email)
 	return &u, err
+}
+
+func (r *UserRepo) GetAllUsers(ctx context.Context) ([]*model.User, error) {
+	rows, err := r.db.Query(ctx, "SELECT id, name, email FROM users")
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var users []*model.User
+
+	for rows.Next() {
+		var u model.User
+		if err := rows.Scan(&u.ID, &u.Name, &u.Email); err != nil {
+			return nil, err
+		}
+
+		users = append(users, &u)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (r *UserRepo) GetByEmail(ctx context.Context, email string) (*model.User, error) {
