@@ -1,4 +1,4 @@
-package handler
+package handler_test
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"go-user-api/internal/handler"
 	"go-user-api/internal/model"
 
 	"github.com/stretchr/testify/assert"
@@ -31,7 +32,7 @@ func (m *mockUserRepo) Delete(_ context.Context, id int) error        { return n
 // ---- ✅ Test CreateUser ----
 
 func TestCreateUser(t *testing.T) {
-	handler := NewUserHandler(&mockUserRepo{})
+	handler := handler.NewUserHandler(&mockUserRepo{})
 
 	// Prepare input user JSON
 	inputUser := model.User{
