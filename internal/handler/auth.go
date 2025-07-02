@@ -8,7 +8,11 @@ import (
 	"go-user-api/internal/model"
 	"go-user-api/internal/repository"
 	"net/http"
+
+	"github.com/go-playground/validator"
 )
+
+var validate = validator.New()
 
 type AuthRouteHandler struct {
 	repo repository.UserRepository
@@ -23,6 +27,11 @@ func (h *AuthRouteHandler) Signup(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	if err := validate.Struct(u); err != nil {
+		http.Error(w, "validation error"+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -43,13 +52,18 @@ func (h *AuthRouteHandler) Signup(w http.ResponseWriter, r *http.Request) {
 
 func (h *AuthRouteHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Email    string `json:"email" validate:"email,required"`
+		Password string `json:"password" validate:"required,min=3"`
 	}
 
 	// Step 1: Decode input
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	if err := validate.Struct(input); err != nil {
+		http.Error(w, "validation error"+err.Error(), http.StatusBadRequest)
 		return
 	}
 
