@@ -1,5 +1,10 @@
 basePath: /
 definitions:
+  model.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
   model.LoginInput:
     properties:
       email:
@@ -82,15 +87,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Get the authenticated user's profile

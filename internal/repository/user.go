@@ -40,7 +40,7 @@ func (r *UserRepo) Get(ctx context.Context, id int) (*model.User, error) {
 }
 
 func (r *UserRepo) GetAllUsers(ctx context.Context) ([]*model.User, error) {
-	rows, err := r.db.Query(ctx, "SELECT id, name, email FROM users")
+	rows, err := r.db.Query(ctx, "SELECT id, name, email, password, created_at FROM users")
 
 	if err != nil {
 		return nil, err
@@ -52,7 +52,9 @@ func (r *UserRepo) GetAllUsers(ctx context.Context) ([]*model.User, error) {
 
 	for rows.Next() {
 		var u model.User
-		if err := rows.Scan(&u.ID, &u.Name, &u.Email); err != nil {
+		if err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.Password, &u.CreatedAt); err != nil {
+
+			fmt.Println("error: ", err.Error())
 			return nil, err
 		}
 

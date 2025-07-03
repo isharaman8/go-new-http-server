@@ -49,15 +49,18 @@ func (h *AuthRouteHandler) Signup(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "Could not hash password", http.StatusInternalServerError)
+		return
 	}
 
 	u.Password = hashedPassword
 
 	if err := h.repo.Create(r.Context(), &u); err != nil {
 		http.Error(w, "failed to signup new user", http.StatusInternalServerError)
+		return
 	}
 
 	json.NewEncoder(w).Encode(u)
+
 }
 
 // Login godoc
@@ -118,17 +121,24 @@ func (h *AuthRouteHandler) Login(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Security     BearerAuth
 // @Success      200 {object} model.User
-// @Failure      400 {object} map[string]string
-// @Failure      401 {object} map[string]string
+// @Failure      400 {object} model.ErrorResponse
+// @Failure      401 {object} model.ErrorResponse
 // @Router       /auth/profile [get]
 func (h *AuthRouteHandler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(middleware.UserIDKey).(int)
+	w.Header().Set("Content-Type", "application/json")
+
+	userID, ok := r.Context().Value(middleware.UserIDKey).(int)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(model.ErrorResponse{Error: "Unauthorized request: invalid token"})
+	}
 
 	fmt.Println("Got User ID:", userID)
 
 	user, err := h.repo.Get(r.Context(), userID)
 	if err != nil {
-		http.Error(w, "User not found", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(model.ErrorResponse{Error: "User not found"})
 		return
 	}
 
